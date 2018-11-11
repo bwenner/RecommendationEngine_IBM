@@ -44,6 +44,8 @@ def IsMatch(txt, wildcard):
     txt: string: text to search
     wildcard: string: wildcard applied to text
     '''
+    if type(txt) is not str:
+        return fnmatch.fnmatch(str(txt), wildcard)
     return fnmatch.fnmatch(txt, wildcard)
 
 def PrintLine(text = '-', number = 20, character = '-'):
