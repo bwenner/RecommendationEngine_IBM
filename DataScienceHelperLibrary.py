@@ -210,7 +210,7 @@ def AnalyzeValueCounts(df, columns = None, types = None, considerMaxValues = 20)
         raise ValueError('df is None')
     if (considerMaxValues < 0 or considerMaxValues > 30):
         raise ValueError('considerMaxValues < 0 or too large (> 30)', considerMaxValues)
-    logtxt = 'Considering columns: '
+
     if columns is None or types is None:
         if columns is None and types is None:
             columns = list(df.columns)
@@ -227,7 +227,7 @@ def AnalyzeValueCounts(df, columns = None, types = None, considerMaxValues = 20)
     if len(columns) == 0:
         print('No columns to Analyze value counts for. Passed columns and types: ', columns, types)
         return
-    print(logtxt, columns)
+
     PrintLine('Dataframe value counts analye started')
     colsWithOnlyOneValue = []
     for col in columns:
@@ -1483,84 +1483,95 @@ def MultiClassifierScoreF1(yTest, yPred):
 
 
 
-
-
-
-
-
+class Math:
+    class Calculus:
+        def DistanceEuler(x, y):
+            '''
+            INPUT
+            x - an array of matching length to array y
+            y - an array of matching length to array x
+            OUTPUT
+            euc - the euclidean distance between x and y
+            '''  
+            return np.linalg.norm(x - y)
+            
+        def DistanceManhatten(x, y):
+            '''
+            INPUT
+            x - an array of matching length to array y
+            y - an array of matching length to array x
+            OUTPUT
+            manhat - the manhattan distance between x and y
+            '''  
+            return sum(abs(e - s) for s, e in zip(x, y))
     
-##################################################
-
-
-
-
-
-
-
-
-
-##################################################
-
-
-'''
-def SplitCategoricalValues(df, dirValTypes):
-    categoricalColumns, needsToEncodeBin, needsToEncodeMulti, needsToEncodeStringBin, needsToEncodeStringMulti, ignoreColumns4Encoding = {}, {}, {}, {}, {}, []
-
-    for col in dirValTypes['categorical']:
-        if not col in df:
-            continue
-
-        dfind = df.columns.get_loc(col)
-
-        valueCounts = df.iloc[:, dfind].value_counts()
-        valCount = valueCounts.count()
-
-        categoricalColumns[col] = valCount
-
-        added = False
-        for ax in valueCounts.axes:
-            for val in ax.values:
-                try:
-                    nbr = int(val)
-
-                    # if any other value appears it must be new encoded
-                    if nbr == 0 or nbr == 1:
-                        continue
-
-                    if valCount == 2:
-                        if not col in needsToEncodeBin:
-                                needsToEncodeBin[col] = []
-                        if (val in needsToEncodeBin[col]):
-                            continue
-                        needsToEncodeBin[col].append( val )
-                    else:
-                        if not col in needsToEncodeMulti:
-                                needsToEncodeMulti[col] = []
-                        if (val in needsToEncodeMulti[col]):
-                            continue
-                        needsToEncodeMulti[col].append( val )
-                    added = True
-                except:
-                    if valCount == 2:
-                        if not col in needsToEncodeStringBin:
-                                needsToEncodeStringBin[col] = []
-                        if (val in needsToEncodeStringBin[col]):
-                            continue
-                        needsToEncodeStringBin[col].append( val )
-                    else:
-                        if not col in needsToEncodeStringMulti:
-                                needsToEncodeStringMulti[col] = []
-                        if (val in needsToEncodeStringMulti[col]):
-                            continue
-                        needsToEncodeStringMulti[col].append( val )
-                    added = True
-        if not added:
-            ignoreColumns4Encoding.append(col)
-
-    return categoricalColumns, needsToEncodeBin, needsToEncodeMulti, needsToEncodeStringBin, needsToEncodeStringMulti, ignoreColumns4Encoding    
-
-'''
-
-
-
-
+    
+    
+    class Statistic:
+        def CorrelationPearson(x, y):
+            '''
+            INPUT
+            x: an array of matching length to array y
+            y: an array of matching length to array x
+            
+        	  OUTPUT
+            corr: the pearson correlation coefficient for comparing x and y
+            '''
+            xMean, yMean = np.sum(x)/len(x), np.sum(y)/len(y) 
+            
+            xDiff = x - xMean
+            yDiffs = y - yMean
+          
+            numerator = np.sum(xDiff*yDiffs)
+            denominator = np.sqrt(np.sum(xDiff**2))*np.sqrt(np.sum(yDiffs**2))
+            corr = numerator/denominator
+                                    
+            return corr      
+    
+        def CorrelationSpearman(x, y):
+            '''
+            INPUT
+            x: an array of matching length to array y
+            y: an array of matching length to array x
+            
+            OUTPUT
+            corr - the spearman correlation coefficient for comparing x and y
+            '''
+            # Change each vector to ranked values
+            x = x.rank()
+            y = y.rank()
+            
+            # Compute Mean Values
+            xMean, yMean = np.sum(x)/len(x), np.sum(y)/len(y) 
+            
+            xDiff = x - xMean
+            yDiff = y - yMean
+            numerator = np.sum(xDiff*yDiff)
+            denominator = np.sqrt(np.sum(xDiff**2))*np.sqrt(np.sum(yDiff**2))
+                
+            corr = numerator/denominator
+                                    
+            return corr
+        
+        def CorrelationKendallsTau(x, y):
+            '''
+            INPUT
+            x: an array of matching length to array y
+            y: an array of matching length to array x
+            
+            OUTPUT
+            tau: the kendall's tau for comparing x and y
+            '''    
+            x = x.rank()
+            y = y.rank()
+            n = len(x)
+             
+            sum_vals = 0
+            for i, (x_i, y_i) in enumerate(zip(x, y)):
+                for j, (x_j, y_j) in enumerate(zip(x, y)):
+                    if i < j:
+                        sum_vals += np.sign(x_i - x_j)*np.sign(y_i - y_j)
+                                
+            tau = 2*sum_vals/(n*(n-1))
+            
+            return tau
